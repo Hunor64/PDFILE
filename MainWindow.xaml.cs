@@ -22,7 +22,7 @@ namespace PDFILE
         public MainWindow()
         {
             InitializeComponent();
-            ReadPdf("path/to/your/file.pdf");
+            ReadPdf("SampleNetworkVulnerabilityScanReport.pdf");
         }
 
         private void ReadPdf(string filePath)
@@ -38,6 +38,7 @@ namespace PDFILE
                         text.Append(PdfTextExtractor.GetTextFromPage(pdfDocument.GetPage(i)));
                     }
                     MessageBox.Show(text.ToString());
+                    lblLyonatán.Content = text.ToString();
                 }
             }
             catch (Exception ex)
