@@ -19,11 +19,13 @@ namespace PDFILE
     /// </summary>
     public partial class MainWindow : Window
     {
+        List<Vulnerability> vulnerabilities = new List<Vulnerability>();
         public MainWindow()
         {
             InitializeComponent();
             ReadPdf("SampleNetworkVulnerabilityScanReport.pdf");
         }
+
 
         private void ReadPdf(string filePath)
         {
@@ -33,22 +35,50 @@ namespace PDFILE
                 using (PdfDocument pdfDocument = new PdfDocument(pdfReader))
                 {
                     StringBuilder text = new StringBuilder();
+                    Vulnerability currentVulnerability = null;
+
                     for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
                     {
                         string pageText = PdfTextExtractor.GetTextFromPage(pdfDocument.GetPage(i));
                         string[] lines = pageText.Split('\n');
 
+                        string currentContent = "";
+                        string[] currentLines = [];
+                        string[] allClassElements = []
+
                         foreach (string line in lines)
                         {
                             if (IsHeader(line))
                             {
+                                if (currentVulnerability != null)
+                                {
+                                    vulnerabilities.Add(currentVulnerability);
+                                }
+
+                                currentVulnerability = new Vulnerability
+                                {
+                                    Title = line
+                                };
                             }
-                            else
+                            else if ()
                             {
-                                text.Append(line + "\n");
+                                
                             }
                         }
                     }
+
+                    if (currentVulnerability != null)
+                    {
+                        vulnerabilities.Add(currentVulnerability);
+                    }
+
+                    foreach (Vulnerability vulnerability in vulnerabilities)
+                    {
+                        text.AppendLine($"Title: {vulnerability.Title}");
+                        text.AppendLine($"Description: {vulnerability.Description}");
+                        text.AppendLine();
+                    }
+
                     lblLyonatán.Content = text.ToString();
                 }
             }
@@ -57,29 +87,22 @@ namespace PDFILE
                 MessageBox.Show($"Error reading PDF: {ex.Message}");
             }
         }
+
         public bool IsHeader(string line)
         {
-            //line.Contains(" - ")
-            /*  if (System.Text.RegularExpressions.Regex.IsMatch(line, @"^\d{5} - "))
-              {
-                  return true;
-              }*/
-
             if (line.Length >= 8)
             {
-                // Check if the first 5 characters are digits
                 for (int i = 0; i < 5; i++)
                 {
                     if (!char.IsDigit(line[i]))
                     {
-                        return false; // Return false if any of the first 5 characters is not a digit
+                        return false;
                     }
                 }
 
-                // Check if the next part is " - "
                 if (line.Substring(5, 3) == " - ")
                 {
-                    return true; // Return true if the format matches
+                    return true;
                 }
             }
 
