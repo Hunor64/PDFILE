@@ -48,7 +48,7 @@ namespace PDFILE
         }
         public bool IsHeader(string line)
         {
-            if (line.)
+            if (System.Text.RegularExpressions.Regex.IsMatch(line, @"^\d{5} - "))
             {
                 return true;
             }
