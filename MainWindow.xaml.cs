@@ -49,10 +49,29 @@ namespace PDFILE
         public bool IsHeader(string line)
         {
             //line.Contains(" - ")
-            if (System.Text.RegularExpressions.Regex.IsMatch(line, @"^\d{5} - "))
+            /*  if (System.Text.RegularExpressions.Regex.IsMatch(line, @"^\d{5} - "))
+              {
+                  return true;
+              }*/
+
+            if (line.Length >= 8)
             {
-                return true;
+                // Check if the first 5 characters are digits
+                for (int i = 0; i < 5; i++)
+                {
+                    if (!char.IsDigit(line[i]))
+                    {
+                        return false; // Return false if any of the first 5 characters is not a digit
+                    }
+                }
+
+                // Check if the next part is " - "
+                if (line.Substring(5, 3) == " - ")
+                {
+                    return true; // Return true if the format matches
+                }
             }
+
             return false;
         }
     }
