@@ -35,9 +35,23 @@ namespace PDFILE
                     StringBuilder text = new StringBuilder();
                     for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
                     {
-                        text.Append(PdfTextExtractor.GetTextFromPage(pdfDocument.GetPage(i)));
+                        string pageText = PdfTextExtractor.GetTextFromPage(pdfDocument.GetPage(i));
+                        string[] lines = pageText.Split('\n');
+
+                        foreach (string line in lines)
+                        {
+                            if (IsHeader(line))
+                            {
+                                // If the line is a header, you can handle it differently
+                                MessageBox.Show($"Header found: {line}");
+                            }
+                            else
+                            {
+                                // If the line is not a header, you can handle it normally
+                                text.Append(line + "\n");
+                            }
+                        }
                     }
-                    MessageBox.Show(text.ToString());
                     lblLyonatán.Content = text.ToString();
                 }
             }
