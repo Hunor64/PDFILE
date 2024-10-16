@@ -42,12 +42,9 @@ namespace PDFILE
                         {
                             if (IsHeader(line))
                             {
-                                // If the line is a header, you can handle it differently
-                                MessageBox.Show($"Header found: {line}");
                             }
                             else
                             {
-                                // If the line is not a header, you can handle it normally
                                 text.Append(line + "\n");
                             }
                         }
