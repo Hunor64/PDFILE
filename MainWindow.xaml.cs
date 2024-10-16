@@ -46,5 +46,13 @@ namespace PDFILE
                 MessageBox.Show($"Error reading PDF: {ex.Message}");
             }
         }
+        public bool IsHeader(string line)
+        {
+            if (line.)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }
