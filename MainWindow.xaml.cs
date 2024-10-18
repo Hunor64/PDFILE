@@ -1,122 +1,113 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.IO;
-using iText.Kernel.Pdf;
+﻿using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
+using System.Text;
+using System.Windows;
 
 namespace PDFILE
 {
     #region generated tcp
- /*   // A C# program for Client
-    using System;
-    using System.Net;
-    using System.Net.Sockets;
-    using System.Text;
+    /*   // A C# program for Client
+       using System;
+       using System.Net;
+       using System.Net.Sockets;
+       using System.Text;
 
-    namespace Client
-    {
+       namespace Client
+       {
 
-        class Program
-        {
+           class Program
+           {
 
-            // Main Method
-            static void Main(string[] args)
-            {
-                ExecuteClient();
-            }
+               // Main Method
+               static void Main(string[] args)
+               {
+                   ExecuteClient();
+               }
 
-            // ExecuteClient() Method
-            static void ExecuteClient()
-            {
+               // ExecuteClient() Method
+               static void ExecuteClient()
+               {
 
-                try
-                {
+                   try
+                   {
 
-                    // Establish the remote endpoint 
-                    // for the socket. This example 
-                    // uses port 11111 on the local 
-                    // computer.
-                    IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-                    IPAddress ipAddr = ipHost.AddressList[0];
-                    IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
+                       // Establish the remote endpoint 
+                       // for the socket. This example 
+                       // uses port 11111 on the local 
+                       // computer.
+                       IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+                       IPAddress ipAddr = ipHost.AddressList[0];
+                       IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
 
-                    // Creation TCP/IP Socket using 
-                    // Socket Class Constructor
-                    Socket sender = new Socket(ipAddr.AddressFamily,
-                            SocketType.Stream, ProtocolType.Tcp);
+                       // Creation TCP/IP Socket using 
+                       // Socket Class Constructor
+                       Socket sender = new Socket(ipAddr.AddressFamily,
+                               SocketType.Stream, ProtocolType.Tcp);
 
-                    try
-                    {
+                       try
+                       {
 
-                        // Connect Socket to the remote 
-                        // endpoint using method Connect()
-                        sender.Connect(localEndPoint);
+                           // Connect Socket to the remote 
+                           // endpoint using method Connect()
+                           sender.Connect(localEndPoint);
 
-                        // We print EndPoint information 
-                        // that we are connected
-                        Console.WriteLine("Socket connected to -> {0} ",
-                                    sender.RemoteEndPoint.ToString());
+                           // We print EndPoint information 
+                           // that we are connected
+                           Console.WriteLine("Socket connected to -> {0} ",
+                                       sender.RemoteEndPoint.ToString());
 
-                        // Creation of message that
-                        // we will send to Server
-                        byte[] messageSent = Encoding.ASCII.GetBytes("Test Client<EOF>");
-                        int byteSent = sender.Send(messageSent);
+                           // Creation of message that
+                           // we will send to Server
+                           byte[] messageSent = Encoding.ASCII.GetBytes("Test Client<EOF>");
+                           int byteSent = sender.Send(messageSent);
 
-                        // Data buffer
-                        byte[] messageReceived = new byte[1024];
+                           // Data buffer
+                           byte[] messageReceived = new byte[1024];
 
-                        // We receive the message using 
-                        // the method Receive(). This 
-                        // method returns number of bytes
-                        // received, that we'll use to 
-                        // convert them to string
-                        int byteRecv = sender.Receive(messageReceived);
-                        Console.WriteLine("Message from Server -> {0}",
-                            Encoding.ASCII.GetString(messageReceived,
-                                                        0, byteRecv));
+                           // We receive the message using 
+                           // the method Receive(). This 
+                           // method returns number of bytes
+                           // received, that we'll use to 
+                           // convert them to string
+                           int byteRecv = sender.Receive(messageReceived);
+                           Console.WriteLine("Message from Server -> {0}",
+                               Encoding.ASCII.GetString(messageReceived,
+                                                           0, byteRecv));
 
-                        // Close Socket using 
-                        // the method Close()
-                        sender.Shutdown(SocketShutdown.Both);
-                        sender.Close();
-                    }
+                           // Close Socket using 
+                           // the method Close()
+                           sender.Shutdown(SocketShutdown.Both);
+                           sender.Close();
+                       }
 
-                    // Manage of Socket's Exceptions
-                    catch (ArgumentNullException ane)
-                    {
+                       // Manage of Socket's Exceptions
+                       catch (ArgumentNullException ane)
+                       {
 
-                        Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                    }
+                           Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+                       }
 
-                    catch (SocketException se)
-                    {
+                       catch (SocketException se)
+                       {
 
-                        Console.WriteLine("SocketException : {0}", se.ToString());
-                    }
+                           Console.WriteLine("SocketException : {0}", se.ToString());
+                       }
 
-                    catch (Exception e)
-                    {
-                        Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                    }
-                }
+                       catch (Exception e)
+                       {
+                           Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                       }
+                   }
 
-                catch (Exception e)
-                {
+                   catch (Exception e)
+                   {
 
-                    Console.WriteLine(e.ToString());
-                }
-            }
-        }
-    }
-*/
+                       Console.WriteLine(e.ToString());
+                   }
+               }
+           }
+       }
+   */
     #endregion
 
     /// <summary>
@@ -131,7 +122,6 @@ namespace PDFILE
             ReadPdf("SampleNetworkVulnerabilityScanReport.pdf");
         }
 
-
         public void ReadPdf(string filePath)
         {
 
@@ -141,8 +131,8 @@ namespace PDFILE
                 StringBuilder text = new StringBuilder();
                 List<Vulnerability> vulnerabilities = new List<Vulnerability>();
                 Vulnerability currentVulnerability = null;
-                    List<string> currentLines = new();
-                    string currentCategory = "";
+                List<string> currentLines = new();
+                string currentCategory = "";
 
                 for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
                 {
@@ -160,7 +150,7 @@ namespace PDFILE
 
                             currentVulnerability = new Vulnerability
                             {
-                                Title = line,
+                                Title = line.TrimEnd('-'),
                             };
                         }
                         else if (IsCategory(line.Trim()))
@@ -196,73 +186,88 @@ namespace PDFILE
 
                     if (!string.IsNullOrEmpty(vulnerability.Synopsis))
                     {
-                        text.AppendLine($"Synopsis: {vulnerability.Synopsis}");
+                        text.AppendLine($"Synopsis: \n{vulnerability.Synopsis}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Description))
                     {
-                        text.AppendLine($"Description: {vulnerability.Description}");
+                        text.AppendLine($"Description: \n{vulnerability.Description}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.See_Also))
                     {
-                        text.AppendLine($"See Also: {vulnerability.See_Also}");
+                        text.AppendLine($"See Also: \n{vulnerability.See_Also}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Solution))
                     {
-                        text.AppendLine($"Solution: {vulnerability.Solution}");
+                        text.AppendLine($"Solution: \n{vulnerability.Solution}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Risk_Factor))
                     {
-                        text.AppendLine($"Risk Factor: {vulnerability.Risk_Factor}");
+                        text.AppendLine($"Risk Factor: \n{vulnerability.Risk_Factor}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.CVSS_Base_Score))
                     {
-                        text.AppendLine($"CVSS Base Score: {vulnerability.CVSS_Base_Score}");
+                        text.AppendLine($"CVSS Base Score: \n{vulnerability.CVSS_Base_Score}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.CVSS_V30_Base_Score))
                     {
-                        text.AppendLine($"CVSS V3.0 Base Score: {vulnerability.CVSS_V30_Base_Score}");
+                        text.AppendLine($"CVSS V3.0 Base Score: \n{vulnerability.CVSS_V30_Base_Score}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.CVSS_Temporal_Score))
                     {
-                        text.AppendLine($"CVSS Temporal Score: {vulnerability.CVSS_Temporal_Score}");
+                        text.AppendLine($"CVSS Temporal Score: \n{vulnerability.CVSS_Temporal_Score}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.CVSS_V30_Temporal_Score))
                     {
-                        text.AppendLine($"CVSS V3.0 Temporal Score: {vulnerability.CVSS_V30_Temporal_Score}");
+                        text.AppendLine($"CVSS V3.0 Temporal Score: \n{vulnerability.CVSS_V30_Temporal_Score}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Plugin_Information))
                     {
-                        text.AppendLine($"Plugin Information: {vulnerability.Plugin_Information}");
+                        text.AppendLine($"Plugin Information: \n{vulnerability.Plugin_Information}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Plugin_Output))
                     {
-                        text.AppendLine($"Plugin Output: {vulnerability.Plugin_Output}");
+                        text.AppendLine($"Plugin Output: \n{vulnerability.Plugin_Output}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.References))
                     {
-                        text.AppendLine($"References: {vulnerability.References}");
+                        text.AppendLine($"References: \n{vulnerability.References}");
+                        text.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.STIG_Severity))
                     {
-                        text.AppendLine($"STIG Severity: {vulnerability.STIG_Severity}");
+                        text.AppendLine($"STIG Severity: \n{vulnerability.STIG_Severity}");
+                        text.AppendLine();
                     }
 
+                    text.AppendLine();
                     text.AppendLine();
                 }
 
                 lblLyonatán.Content = text.ToString();
+
                 #endregion
 
             }
@@ -295,12 +300,12 @@ namespace PDFILE
         public bool IsCategory(string sor)
         {
             string[] validCategories = {
-                "Synopsis", "Description", "See Also", "Solution",
-                "Risk Factor", "CVSS Base Score", "CVSS V3.0 Base Score",
-                "CVSS Temporal Score", "CVSS V3.0 Temporal Score",
-                "Plugin Information", "Plugin Output", "References",
-                "STIG Severity"
-            };
+                    "Synopsis", "Description", "See Also", "Solution",
+                    "Risk Factor", "CVSS Base Score", "CVSS v3.0 Base Score",
+                    "CVSS Temporal Score", "CVSS v3.0 Temporal Score",
+                    "Plugin Information", "Plugin Output", "References",
+                    "STIG Severity"
+                };
 
             return validCategories.Contains(sor);
 
@@ -331,7 +336,7 @@ namespace PDFILE
                     vulnerability.CVSS_Base_Score = string.Join("\n", lines);
                     break;
 
-                case "CVSS V3.0 Base Score":
+                case "CVSS v3.0 Base Score":
                     vulnerability.CVSS_V30_Base_Score = string.Join("\n", lines);
                     break;
 
@@ -339,7 +344,7 @@ namespace PDFILE
                     vulnerability.CVSS_Temporal_Score = string.Join("\n", lines);
                     break;
 
-                case "CVSS V3.0 Temporal Score":
+                case "CVSS v3.0 Temporal Score":
                     vulnerability.CVSS_V30_Temporal_Score = string.Join("\n", lines);
                     break;
 
