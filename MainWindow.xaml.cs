@@ -15,50 +15,108 @@ using iText.Kernel.Pdf.Canvas.Parser;
 namespace PDFILE
 {
     #region generated tcp
-    /* using System;
-     using System.Net;
-     using System.Net.Sockets;
-     using System.Text;
+ /*   // A C# program for Client
+    using System;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Text;
 
-     class TcpClientExample
-     {
-         static void Main(string[] args)
-         {
-             // Define the server address and port
-             string serverIp = "127.0.0.1"; // Change this to the server's IP address
-             int port = 8080; // Change this to the server's port
+    namespace Client
+    {
 
-             try
-             {
-                 // Create a TCP client
-                 using (TcpClient client = new TcpClient())
-                 {
-                     // Connect to the server
-                     client.Connect(IPAddress.Parse(serverIp), port);
-                     Console.WriteLine("Connected to the server.");
+        class Program
+        {
 
-                     // Get the network stream
-                     NetworkStream stream = client.GetStream();
+            // Main Method
+            static void Main(string[] args)
+            {
+                ExecuteClient();
+            }
 
-                     // Send a message to the server
-                     string message = "Hello, Server!";
-                     byte[] data = Encoding.ASCII.GetBytes(message);
-                     stream.Write(data, 0, data.Length);
-                     Console.WriteLine("Sent: {0}", message);
+            // ExecuteClient() Method
+            static void ExecuteClient()
+            {
 
-                     // Receive a response from the server
-                     byte[] buffer = new byte[256];
-                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                     string response = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                     Console.WriteLine("Received: {0}", response);
-                 }
-             }
-             catch (Exception ex)
-             {
-                 Console.WriteLine("Error: {0}", ex.Message);
-             }
-         }
-     }*/
+                try
+                {
+
+                    // Establish the remote endpoint 
+                    // for the socket. This example 
+                    // uses port 11111 on the local 
+                    // computer.
+                    IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+                    IPAddress ipAddr = ipHost.AddressList[0];
+                    IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
+
+                    // Creation TCP/IP Socket using 
+                    // Socket Class Constructor
+                    Socket sender = new Socket(ipAddr.AddressFamily,
+                            SocketType.Stream, ProtocolType.Tcp);
+
+                    try
+                    {
+
+                        // Connect Socket to the remote 
+                        // endpoint using method Connect()
+                        sender.Connect(localEndPoint);
+
+                        // We print EndPoint information 
+                        // that we are connected
+                        Console.WriteLine("Socket connected to -> {0} ",
+                                    sender.RemoteEndPoint.ToString());
+
+                        // Creation of message that
+                        // we will send to Server
+                        byte[] messageSent = Encoding.ASCII.GetBytes("Test Client<EOF>");
+                        int byteSent = sender.Send(messageSent);
+
+                        // Data buffer
+                        byte[] messageReceived = new byte[1024];
+
+                        // We receive the message using 
+                        // the method Receive(). This 
+                        // method returns number of bytes
+                        // received, that we'll use to 
+                        // convert them to string
+                        int byteRecv = sender.Receive(messageReceived);
+                        Console.WriteLine("Message from Server -> {0}",
+                            Encoding.ASCII.GetString(messageReceived,
+                                                        0, byteRecv));
+
+                        // Close Socket using 
+                        // the method Close()
+                        sender.Shutdown(SocketShutdown.Both);
+                        sender.Close();
+                    }
+
+                    // Manage of Socket's Exceptions
+                    catch (ArgumentNullException ane)
+                    {
+
+                        Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+                    }
+
+                    catch (SocketException se)
+                    {
+
+                        Console.WriteLine("SocketException : {0}", se.ToString());
+                    }
+
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                    }
+                }
+
+                catch (Exception e)
+                {
+
+                    Console.WriteLine(e.ToString());
+                }
+            }
+        }
+    }
+*/
     #endregion
 
     /// <summary>
