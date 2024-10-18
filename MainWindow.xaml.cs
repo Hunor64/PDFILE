@@ -183,6 +183,7 @@ namespace PDFILE
                 foreach (Vulnerability vulnerability in vulnerabilities)
                 {
                     text.AppendLine($"Title: {vulnerability.Title}");
+                    text.AppendLine();
 
                     if (!string.IsNullOrEmpty(vulnerability.Synopsis))
                     {
@@ -291,6 +292,10 @@ namespace PDFILE
             }
 
             if (line.Substring(5, 3) == " - ")
+            {
+                return true;
+            }
+            else if (line.Substring(6, 3) == " - ")
             {
                 return true;
             }
