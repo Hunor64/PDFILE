@@ -6,114 +6,101 @@ using System.Windows.Controls;
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PDFILE
 {
-     /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         List<Vulnerability> vulnerabilities = new List<Vulnerability>();
+       
+
         public MainWindow()
         {
-            ExecuteClient();
             InitializeComponent();
+            ExecuteClientAsync(); // Start the TCP client asynchronously
             ReadPdf("SampleNetworkVulnerabilityScanReport.pdf");
         }
 
-    static void ExecuteClient()
-    {
+        string pdfContent;
 
-        try
+        #region TCP connection
+        private async void ExecuteClientAsync()
         {
-
-            // Establish the remote endpoint 
-            // for the socket. This example 
-            // uses port 11111 on the local 
-            // computer.
-            IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddr = ipHost.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
-
-            // Creation TCP/IP Socket using 
-            // Socket Class Constructor
-            Socket sender = new Socket(ipAddr.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
-
             try
             {
+                // Establish the remote endpoint for the socket.
+                IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+                IPAddress ipAddr = ipHost.AddressList[0];
+                IPEndPoint localEndPoint = new IPEndPoint(ipAddr, 11111);
 
-                // Connect Socket to the remote 
-                // endpoint using method Connect()
-                sender.Connect(localEndPoint);
+                // Creation of TCP/IP Socket using Socket Class Constructor
+                using (Socket sender = new Socket(ipAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp))
+                {
+                    try
+                    {
+                        // Connect Socket to the remote endpoint
+                        await Task.Run(() => sender.Connect(localEndPoint));
 
-                // We print EndPoint information 
-                // that we are connected
-                Console.WriteLine("Socket connected to -> {0} ",
-                            sender.RemoteEndPoint.ToString());
+                        byte[] pdfBytes = Encoding.UTF8.GetBytes(pdfContent + "<EOF>"); // Append <EOF> to indicate end of message
 
-                // Creation of message that
-                // we will send to Server
-                byte[] messageSent = Encoding.ASCII.GetBytes("Test Client<EOF>");
-                int byteSent = sender.Send(messageSent);
+                        sender.Send(pdfBytes);
 
-                // Data buffer
-                byte[] messageReceived = new byte[1024];
 
-                // We receive the message using 
-                // the method Receive(). This 
-                // method returns number of bytes
-                // received, that we'll use to 
-                // convert them to string
-                int byteRecv = sender.Receive(messageReceived);
-                Console.WriteLine("Message from Server -> {0}",
-                    Encoding.ASCII.GetString(messageReceived,
-                                                0, byteRecv));
+                        // Data buffer to receive the message
 
-                // Close Socket using 
-                // the method Close()
-                sender.Shutdown(SocketShutdown.Both);
-                sender.Close();
+                        byte[] messageReceived = new byte[1024];
+
+
+                        // Receive the message
+
+                        int byteRecv = sender.Receive(messageReceived);
+
+                        string receivedMessage = Encoding.ASCII.GetString(messageReceived, 0, byteRecv);
+
+
+                        // Update the UI with the received message
+
+                        AddMessageToStackPanel(receivedMessage);
+
+                        // Close Socket
+                        sender.Shutdown(SocketShutdown.Both);
+                    }
+                    catch (Exception ex)
+                    {
+                        AddMessageToStackPanel($"Exception: {ex.Message}");
+                    }
+                }
             }
-
-            // Manage of Socket's Exceptions
-            catch (ArgumentNullException ane)
+            catch (Exception ex)
             {
-
-                Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-            }
-
-            catch (SocketException se)
-            {
-
-                Console.WriteLine("SocketException : {0}", se.ToString());
-            }
-
-            catch (Exception e)
-            {
-                Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                AddMessageToStackPanel($"General Exception: {ex.Message}");
             }
         }
 
-        catch (Exception e)
+        private void AddMessageToStackPanel(string message)
         {
+            // Create a TextBlock for the received message
+            TextBlock messageTextBlock = new TextBlock
+            {
+                Text = message,
+                Margin = new Thickness(0, 5, 0, 5)
+            };
 
-            Console.WriteLine(e.ToString());
+            // Add the TextBlock to the StackPanel (Negro)
+            Negro.Children.Add(messageTextBlock);
         }
-    }
+        #endregion
 
-
-
-    public void ReadPdf(string filePath)
+        #region PDF reader
+        public void ReadPdf(string filePath)
         {
-
             using (PdfReader pdfReader = new PdfReader(filePath))
             using (PdfDocument pdfDocument = new PdfDocument(pdfReader))
             {
                 StringBuilder text = new StringBuilder();
-           
                 List<Vulnerability> vulnerabilities = new List<Vulnerability>();
                 Vulnerability currentVulnerability = null;
                 List<string> currentLines = new();
@@ -151,7 +138,6 @@ namespace PDFILE
                                 currentCategory = line.Trim();
                             }
                         }
-
                         else if (currentVulnerability != null)
                         {
                             currentLines.Add(line.Trim());
@@ -251,12 +237,10 @@ namespace PDFILE
                     }
 
                     textBox.Text = text.ToString();
+                    pdfContent = text.ToString();
                     lblLyonatán.Children.Add(textBox);
                 }
-
-
                 #endregion
-
             }
         }
 
@@ -361,5 +345,6 @@ namespace PDFILE
 
             return vulnerability;
         }
+        #endregion
     }
 }
