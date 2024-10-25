@@ -1,0 +1,3 @@
+https://www.geeksforgeeks.org/socket-programming-in-c-sharp/
+
+https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/sockets/socket-services
