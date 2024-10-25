@@ -2,6 +2,7 @@
 using iText.Kernel.Pdf.Canvas.Parser;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace PDFILE
 {
@@ -129,6 +130,7 @@ namespace PDFILE
             using (PdfDocument pdfDocument = new PdfDocument(pdfReader))
             {
                 StringBuilder text = new StringBuilder();
+           
                 List<Vulnerability> vulnerabilities = new List<Vulnerability>();
                 Vulnerability currentVulnerability = null;
                 List<string> currentLines = new();
@@ -182,6 +184,8 @@ namespace PDFILE
                 #region Write all lines
                 foreach (Vulnerability vulnerability in vulnerabilities)
                 {
+                    text = new StringBuilder();
+                    TextBox textBox = new TextBox();
                     text.AppendLine($"Title: {vulnerability.Title}");
                     text.AppendLine();
 
@@ -263,11 +267,10 @@ namespace PDFILE
                         text.AppendLine();
                     }
 
-                    text.AppendLine();
-                    text.AppendLine();
+                    textBox.Text = text.ToString();
+                    lblLyonatán.Children.Add(textBox);
                 }
 
-                lblLyonatán.Content = text.ToString();
 
                 #endregion
 

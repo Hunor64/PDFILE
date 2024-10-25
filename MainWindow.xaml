@@ -8,7 +8,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <ScrollViewer>
-            <Label Name="lblLyonatán" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <StackPanel Name="lblLyonatán" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </ScrollViewer>
     </Grid>
 </Window>
