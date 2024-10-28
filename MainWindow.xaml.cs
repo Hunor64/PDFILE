@@ -15,13 +15,12 @@ namespace PDFILE
     public partial class MainWindow : Window
     {
         List<Vulnerability> vulnerabilities = new List<Vulnerability>();
-       
 
         public MainWindow()
         {
             InitializeComponent();
-            ExecuteClientAsync(); // Start the TCP client asynchronously
             ReadPdf("SampleNetworkVulnerabilityScanReport.pdf");
+            ExecuteClientAsync(); // Start the TCP client asynchronously after reading the PDF
         }
 
         string pdfContent;
@@ -44,22 +43,105 @@ namespace PDFILE
                         // Connect Socket to the remote endpoint
                         await Task.Run(() => sender.Connect(localEndPoint));
 
-                        byte[] pdfBytes = Encoding.UTF8.GetBytes(pdfContent + "<EOF>"); // Append <EOF> to indicate end of message
+                        // Create a single string to send all vulnerabilities
+                        StringBuilder allVulnerabilitiesText = new StringBuilder();
+                        foreach (Vulnerability vulnerability in vulnerabilities)
+                        {
+                            allVulnerabilitiesText.AppendLine($"Title: {vulnerability.Title}");
+                            allVulnerabilitiesText.AppendLine();
+
+                            if (!string.IsNullOrEmpty(vulnerability.Synopsis))
+                            {
+                                allVulnerabilitiesText.AppendLine($"Synopsis: \n{vulnerability.Synopsis}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.Description))
+                            {
+                                allVulnerabilitiesText.AppendLine($"Description: \n{vulnerability.Description}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.See_Also))
+                            {
+                                allVulnerabilitiesText.AppendLine($"See Also: \n{vulnerability.See_Also}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.Solution))
+                            {
+                                allVulnerabilitiesText.AppendLine($"Solution: \n{vulnerability.Solution}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.Risk_Factor))
+                            {
+                                allVulnerabilitiesText.AppendLine($"Risk Factor: \n{vulnerability.Risk_Factor}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.CVSS_Base_Score))
+                            {
+                                allVulnerabilitiesText.AppendLine($"CVSS Base Score: \n{vulnerability.CVSS_Base_Score}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.CVSS_V30_Base_Score))
+                            {
+                                allVulnerabilitiesText.AppendLine($"CVSS V3.0 Base Score: \n{vulnerability.CVSS_V30_Base_Score}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.CVSS_Temporal_Score))
+                            {
+                                allVulnerabilitiesText.AppendLine($"CVSS Temporal Score: \n{vulnerability.CVSS_Temporal_Score}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.CVSS_V30_Temporal_Score))
+                            {
+                                allVulnerabilitiesText.AppendLine($"CVSS V3.0 Temporal Score: \n{vulnerability.CVSS_V30_Temporal_Score}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.Plugin_Information))
+                            {
+                                allVulnerabilitiesText.AppendLine($"Plugin Information: \n{vulnerability.Plugin_Information}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.Plugin_Output))
+                            {
+                                allVulnerabilitiesText.AppendLine($"Plugin Output: \n{vulnerability.Plugin_Output}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.References))
+                            {
+                                allVulnerabilitiesText.AppendLine($"References: \n{vulnerability.References}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+
+                            if (!string.IsNullOrEmpty(vulnerability.STIG_Severity))
+                            {
+                                allVulnerabilitiesText.AppendLine($"STIG Severity: \n{vulnerability.STIG_Severity}");
+                                allVulnerabilitiesText.AppendLine();
+                            }
+                        }
+
+                        byte[] pdfBytes = Encoding.UTF8.GetBytes(allVulnerabilitiesText.ToString() + "<EOF>"); // Append <EOF> to indicate end of message
 
                         sender.Send(pdfBytes);
 
-
                         // Data buffer to receive the message
 
-                        byte[] messageReceived = new byte[1024];
-
+                        byte[] messageReceived = new byte[1024000];
 
                         // Receive the message
 
                         int byteRecv = sender.Receive(messageReceived);
 
                         string receivedMessage = Encoding.ASCII.GetString(messageReceived, 0, byteRecv);
-
 
                         // Update the UI with the received message
 
@@ -101,7 +183,7 @@ namespace PDFILE
             using (PdfDocument pdfDocument = new PdfDocument(pdfReader))
             {
                 StringBuilder text = new StringBuilder();
-                List<Vulnerability> vulnerabilities = new List<Vulnerability>();
+                vulnerabilities.Clear(); // Clear previous vulnerabilities to avoid memory accumulation
                 Vulnerability currentVulnerability = null;
                 List<string> currentLines = new();
                 string currentCategory = "";
@@ -131,7 +213,7 @@ namespace PDFILE
                             {
                                 ModifyVulnerability(currentVulnerability, currentCategory, currentLines);
                                 currentCategory = line.Trim();
-                                currentLines = new();
+                                currentLines.Clear(); // Clear previous lines to avoid memory accumulation
                             }
                             else
                             {
@@ -150,97 +232,98 @@ namespace PDFILE
                     vulnerabilities.Add(currentVulnerability);
                 }
 
-                #region Write all lines
+                // Create a new StringBuilder for text output
+                StringBuilder outputText = new StringBuilder();
+
                 foreach (Vulnerability vulnerability in vulnerabilities)
                 {
-                    text = new StringBuilder();
-                    TextBox textBox = new TextBox();
-                    text.AppendLine($"Title: {vulnerability.Title}");
-                    text.AppendLine();
+                    outputText.Clear(); // Clear previous text before appending new content
+                    outputText.AppendLine($"Title: {vulnerability.Title}");
+                    outputText.AppendLine();
 
                     if (!string.IsNullOrEmpty(vulnerability.Synopsis))
                     {
-                        text.AppendLine($"Synopsis: \n{vulnerability.Synopsis}");
-                        text.AppendLine();
+                        outputText.AppendLine($"Synopsis: \n{vulnerability.Synopsis}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Description))
                     {
-                        text.AppendLine($"Description: \n{vulnerability.Description}");
-                        text.AppendLine();
+                        outputText.AppendLine($"Description: \n{vulnerability.Description}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.See_Also))
                     {
-                        text.AppendLine($"See Also: \n{vulnerability.See_Also}");
-                        text.AppendLine();
+                        outputText.AppendLine($"See Also: \n{vulnerability.See_Also}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Solution))
                     {
-                        text.AppendLine($"Solution: \n{vulnerability.Solution}");
-                        text.AppendLine();
+                        outputText.AppendLine($"Solution: \n{vulnerability.Solution}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Risk_Factor))
                     {
-                        text.AppendLine($"Risk Factor: \n{vulnerability.Risk_Factor}");
-                        text.AppendLine();
+                        outputText.AppendLine($"Risk Factor: \n{vulnerability.Risk_Factor}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.CVSS_Base_Score))
                     {
-                        text.AppendLine($"CVSS Base Score: \n{vulnerability.CVSS_Base_Score}");
-                        text.AppendLine();
+                        outputText.AppendLine($"CVSS Base Score: \n{vulnerability.CVSS_Base_Score}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.CVSS_V30_Base_Score))
                     {
-                        text.AppendLine($"CVSS V3.0 Base Score: \n{vulnerability.CVSS_V30_Base_Score}");
-                        text.AppendLine();
+                        outputText.AppendLine($"CVSS V3.0 Base Score: \n{vulnerability.CVSS_V30_Base_Score}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.CVSS_Temporal_Score))
                     {
-                        text.AppendLine($"CVSS Temporal Score: \n{vulnerability.CVSS_Temporal_Score}");
-                        text.AppendLine();
+                        outputText.AppendLine($"CVSS Temporal Score: \n{vulnerability.CVSS_Temporal_Score}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.CVSS_V30_Temporal_Score))
                     {
-                        text.AppendLine($"CVSS V3.0 Temporal Score: \n{vulnerability.CVSS_V30_Temporal_Score}");
-                        text.AppendLine();
+                        outputText.AppendLine($"CVSS V3.0 Temporal Score: \n{vulnerability.CVSS_V30_Temporal_Score}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Plugin_Information))
                     {
-                        text.AppendLine($"Plugin Information: \n{vulnerability.Plugin_Information}");
-                        text.AppendLine();
+                        outputText.AppendLine($"Plugin Information: \n{vulnerability.Plugin_Information}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.Plugin_Output))
                     {
-                        text.AppendLine($"Plugin Output: \n{vulnerability.Plugin_Output}");
-                        text.AppendLine();
+                        outputText.AppendLine($"Plugin Output: \n{vulnerability.Plugin_Output}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.References))
                     {
-                        text.AppendLine($"References: \n{vulnerability.References}");
-                        text.AppendLine();
+                        outputText.AppendLine($"References: \n{vulnerability.References}");
+                        outputText.AppendLine();
                     }
 
                     if (!string.IsNullOrEmpty(vulnerability.STIG_Severity))
                     {
-                        text.AppendLine($"STIG Severity: \n{vulnerability.STIG_Severity}");
-                        text.AppendLine();
+                        outputText.AppendLine($"STIG Severity: \n{vulnerability.STIG_Severity}");
+                        outputText.AppendLine();
                     }
 
-                    textBox.Text = text.ToString();
-                    pdfContent = text.ToString();
+                    TextBox textBox = new TextBox();
+                    textBox.Text = outputText.ToString();
+                    pdfContent = textBox.Text; // Assign the text to pdfContent
                     lblLyonatán.Children.Add(textBox);
                 }
-                #endregion
             }
         }
 
